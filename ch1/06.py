@@ -6,6 +6,17 @@
 """
 
 def n_gram(text_sequence, n):
+    """ (05と共通)与えられたシーケンス（文字列やリストなど）からn-gramを作成
+    Args:
+      str: 任意のシーケンス（文字列やリストなど）
+      n: n-gramのn
+    Raise:
+      特になし
+    Return:
+      n-gram(リスト形式)
+    Note:
+    　特になし
+    """
     n_gram = []
     sequence_index = 0
 
