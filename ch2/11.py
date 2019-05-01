@@ -6,7 +6,7 @@
 
 #
 # 以下のようにexpandコマンドを使用して確認
-# expand -t 1 xxxxx.txt > result.txt 
+# expand -t 1 hightemp.txt > result.txt 
 #
 
 import sys
