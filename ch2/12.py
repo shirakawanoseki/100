@@ -3,6 +3,11 @@
 12. 1列目をcol1.txtに，2列目をcol2.txtに保存
 各行の1列目だけを抜き出したものをcol1.txtに，2列目だけを抜き出したものをcol2.txtとしてファイルに保存せよ．確認にはcutコマンドを用いよ．
 """
+#
+# 以下のようにexpandコマンドを使用して確認
+# cut -f 1 hightemp.txt
+# cut -f 2 hightemp.txt 
+#
 
 import sys
 import fileinput
