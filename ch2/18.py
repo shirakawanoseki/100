@@ -19,8 +19,7 @@ with fileinput.input(files=(sys.argv[1])) as input:
         splited_line = line.split('\t')
         list_of_list.append(splited_line)
 
-    sorted(list_of_list, key=lambda hightemp: hightemp[2],reverse=True) 
-    list_of_list.reverse()
+    list_of_list.sort(key=lambda x: x[2], reverse=True)
 
     for element in list_of_list:
         print("{0}\t{1}\t{2}\t{3}".format(element[0],element[1],element[2],element[3],), end="")
