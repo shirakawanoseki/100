@@ -11,8 +11,9 @@ import re
 with gzip.open(sys.argv[1], "rt") as f:
     for data_line in f:
         js = json.loads(data_line)
-        splited_json = js["text"].split('\n')
-        for line in splited_json:
-            search_result = re.search(r'^\[\[Category:(.*)\]\]$', line)
-            if search_result:
-                print(search_result.group(1))
+        if js["title"] == 'イギリス':
+            splited_json = js["text"].split('\n')
+            for line in splited_json:
+                search_result = re.search(r'^\[\[Category:(.*)\]\]$', line)
+                if search_result:
+                    print(search_result.group(1))
