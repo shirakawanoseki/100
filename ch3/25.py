@@ -10,10 +10,17 @@ import gzip
 import re
 
 with gzip.open(sys.argv[1], "rt") as f:
+    template = {}
     for data_line in f:
         js = json.loads(data_line)
         if js["title"] == 'イギリス':
-            json_text = js["text"]
-            search_result = re.finditer(r'^\{\{基礎情報 国(.+?)\}\}$', json_text, flags = (re.MULTILINE | re.DOTALL))
-            for r in search_result:
-                print(r.group(0))
+            basic_info_iter = re.finditer(r'^\{\{基礎情報 国(.+?)\}\}$', js["text"], flags = (re.MULTILINE | re.DOTALL))
+            for basic_info in basic_info_iter:
+                splitted_basic_info = basic_info.group(0).split('\n')
+                for basic_info_line in splitted_basic_info:
+                    match_result = re.match(r'\|(.*?)\s+=\s+(.*)', basic_info_line)
+                    if match_result:
+                        template[match_result.group(1)] = match_result.group(2)
+
+    print(template)
+
