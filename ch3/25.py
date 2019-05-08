@@ -14,13 +14,15 @@ with gzip.open(sys.argv[1], "rt") as f:
     for data_line in f:
         js = json.loads(data_line)
         if js["title"] == 'イギリス':
-            basic_info_iter = re.finditer(r'^\{\{基礎情報 国(.+?)\}\}$', js["text"], flags = (re.MULTILINE | re.DOTALL))
-            for basic_info in basic_info_iter:
-                splitted_basic_info = basic_info.group(0).split('\n')
-                for basic_info_line in splitted_basic_info:
-                    match_result = re.match(r'\|(.*?)\s+=\s+(.*)', basic_info_line)
-                    if match_result:
-                        template[match_result.group(1)] = match_result.group(2)
+            #基礎情報のセクションを先読
+            basic_info = re.search(r'^\{\{基礎情報 国(.+?)\}\}$', js["text"], flags = (re.MULTILINE | re.DOTALL))
+            #改行文字で分割
+            splitted_basic_info = basic_info.group(0).split('\n')
+            #分割した各行の内、パターンにマッチするものを辞書オブジェクトに格納
+            for basic_info_line in splitted_basic_info:
+                match_result = re.match(r'\|(.*?)\s+=\s+(.*)', basic_info_line)
+                if match_result:
+                    template[match_result.group(1)] = match_result.group(2)
 
     print(template)
 
