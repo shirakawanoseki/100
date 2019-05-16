@@ -10,11 +10,17 @@ import re
 import sys
 
 class Morph:
+    """ 形態素を表すクラス
+    """
     def __init__(self, surface, base, pos, pos1):
         self.surface = surface
         self.base = base
         self.pos = pos
         self.pos1 = pos1
+
+    def __str__(self):
+        return ('surface[{0}] base[{1}] pos[{2}] pos1[{3}]'.format(self.surface, self.base, self.pos, self.pos1))
+
 
 def parse_input_file():
     """ 「我が輩は猫である」を係り受け解析して結果を'neko.txt.cabocha'に保存
@@ -24,49 +30,55 @@ def parse_input_file():
     Raise:
       特になし
     Return:
-      特になし
+      解析結果を*.cabochaに保存
     Note:
-    　入力ファイルはコマンドライン引数より指定
+    　入力ファイル名はコマンドライン引数より指定
     """
 
     CaboChaParser = CaboCha.Parser()
 
     with open(sys.argv[1], mode='r') as input_file, open(sys.argv[1] + '.cabocha', mode='w') as output_file:
-        #入力ファイルの読み込み
-        read_data = input_file.read()
         #CaboChaで係り受け解析を行い、結果を出力ファイルに保存
-        tree =  CaboChaParser.parse(read_data)
-        output_file.write(tree.toString(CaboCha.FORMAT_LATTICE))
+        for line in input_file:
+            tree =  CaboChaParser.parse(line)
+            output_file.write(tree.toString(CaboCha.FORMAT_LATTICE))
 
 def build_morph_list():
+    """ 「我が輩は猫である」を係り受け解析して結果を文毎のMorphオブジェクトのリストに保存
+
+    Args:
+    　特になし
+    Raise:
+      特になし
+    Return:
+      文毎のMorphオブジェクトのリスト
+    Note:
+    　入力ファイル名はコマンドライン引数より指定
+    """
     sentence_list = []
     with open(sys.argv[1] + '.cabocha', mode='r') as input_file:
         morph_obj_list = []
         for line in input_file.readlines():
             
-            #入力ファイルの終端に達したら(EOSに達したら)ループを抜ける
+            #文の終端に達したら(EOSに達したら)次の文へ
             if re.match(r'^EOS$',line) or not line:
-                break
-            
-            #
-            if re.match(r'^\*',line):
-                continue
-
-            #フォーマットに従って文を分解
-            split_by_tab = line.split('\t')
-            split_by_comma = split_by_tab[1].split(',')
-
-            #句点に達したら文末と判定
-            if split_by_comma[1] == '句点':
                 sentence_list.append(morph_obj_list)
                 morph_obj_list = []
                 continue
+            else:
+                #*で始まる行は係り受け解析なので今回は無視
+                if re.match(r'^\*',line):
+                    continue
 
-            morph_obj = Morph(split_by_tab[0], split_by_comma[6], split_by_comma[0], split_by_comma[1])
-            morph_obj_list.append(morph_obj)
+                #タブとカンマで区切られている本文を分解
+                split_by_tab = line.split('\t')
+                split_by_comma = split_by_tab[1].split(',')
+
+                #Morphオブジェクトを作成して文毎のリストに追加
+                morph_obj = Morph(split_by_tab[0], split_by_comma[6], split_by_comma[0], split_by_comma[1])
+                morph_obj_list.append(morph_obj)
 
     return sentence_list
-
 
 
 if __name__ == "__main__":
@@ -75,5 +87,7 @@ if __name__ == "__main__":
     parse_input_file()
     sentence_list = build_morph_list()
 
-    print(sentence_list[2])
+    #3番目の形態素列を表示
+    for morph in sentence_list[2]:
+        print(morph)
 
